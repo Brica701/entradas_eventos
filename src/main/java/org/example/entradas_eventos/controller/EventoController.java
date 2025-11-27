@@ -9,62 +9,74 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
 @Controller
 @RequestMapping("/eventos")
-@SessionAttributes("evento")
+@SessionAttributes("compraEntrada")
 public class EventoController {
 
-    private EventoService eventoService;
+    private final EventoService eventoService;
 
     public EventoController(EventoService eventoService) {
         this.eventoService = eventoService;
     }
 
-    @GetMapping("/comprar/paso1")
-    public String getPaso1(Evento evento, Model model){
-
-        // Obtener lista de eventos desde el servicio
-        List<Evento> eventos = eventoService.listarEventos();
-        model.addAttribute("eventos", eventos);
-
-        // Crear un objeto CompraEntrada vacío para Thymeleaf
-        model.addAttribute("compraEntrada", new CompraEntrada());
-
-        return "paso1"; // Thymeleaf view
-
+    // Inicializa compraEntrada en la sesión si no existe
+    @ModelAttribute("compraEntrada")
+    public CompraEntrada initCompraEntrada() {
+        return new CompraEntrada();
     }
 
+    // -------------------- PASO 1 --------------------
+    @GetMapping("/comprar/paso1")
+    public String getPaso1(Model model) {
+        List<Evento> eventos = eventoService.listarEventos();
+        model.addAttribute("eventos", eventos);
+        return "paso1";
+    }
+
+    @PostMapping("/comprar/paso1")
+    public String postPaso1(@ModelAttribute("compraEntrada") CompraEntrada compraEntrada) {
+        // Redirige al paso2
+        return "redirect:/eventos/comprar/paso2";
+    }
+
+    // -------------------- PASO 2 --------------------
     @GetMapping("/comprar/paso2")
     public String getPaso2(@ModelAttribute("compraEntrada") CompraEntrada compraEntrada, Model model) {
-        // Recuperar el evento seleccionado desde el servicio
+        if (compraEntrada.getEventoId() == null) {
+            return "redirect:/eventos/comprar/paso1";
+        }
+
         Evento evento = eventoService.obtenerPorId(compraEntrada.getEventoId());
+        if (evento == null) {
+            return "redirect:/eventos/comprar/paso1";
+        }
 
-        // Pasamos los datos a la vista
         model.addAttribute("evento", evento);
-
-        // Opciones de zona
         model.addAttribute("zonas", List.of("GENERAL", "GRADA", "VIP"));
-
-        return "paso2"; // nombre de la plantilla Thymeleaf
+        return "paso2";
     }
 
     @PostMapping("/comprar/paso2")
     public String postPaso2(@ModelAttribute("compraEntrada") CompraEntrada compraEntrada) {
-        // Se guarda la zona elegida en el objeto de sesión
-        // Paso siguiente: Paso 3
+        // Zona ya seleccionada, redirige a paso3
         return "redirect:/eventos/comprar/paso3";
     }
+
+    // -------------------- PASO 3 --------------------
     @GetMapping("/comprar/paso3")
     public String getPaso3(@ModelAttribute("compraEntrada") CompraEntrada compraEntrada, Model model) {
-        // Recuperar el evento seleccionado
+        if (compraEntrada.getEventoId() == null || compraEntrada.getZona() == null) {
+            return "redirect:/eventos/comprar/paso1";
+        }
+
         Evento evento = eventoService.obtenerPorId(compraEntrada.getEventoId());
         model.addAttribute("evento", evento);
 
-        // Calcular precio unitario según la zona
+        // Calcular precios
         BigDecimal precioUnitario = evento.getPrecioBase();
         if ("GRADA".equalsIgnoreCase(compraEntrada.getZona())) {
             precioUnitario = precioUnitario.add(evento.getRecargoGrada());
@@ -74,22 +86,16 @@ public class EventoController {
 
         compraEntrada.setPrecioUnitario(precioUnitario);
         compraEntrada.setPrecioTotal(precioUnitario.multiply(BigDecimal.valueOf(compraEntrada.getNumeroEntradas())));
-
         model.addAttribute("compraEntrada", compraEntrada);
 
-        return "paso3"; // nombre de la vista Thymeleaf
+        return "paso3";
     }
 
     @PostMapping("/comprar/paso3")
     public String postPaso3(@ModelAttribute("compraEntrada") CompraEntrada compraEntrada) {
-        // Fecha de compra
-        compraEntrada.setFechaCompra(LocalDateTime.now());
-
-        // Guardar en la base de datos
+        // Guardar compra
         eventoService.guardarCompra(compraEntrada);
-
-        // Redirigir a pantalla final de confirmación
-        return "redirect:/eventos/comprar/final";
+        // Aquí puedes redirigir al inicio o mostrar un mensaje de éxito
+        return "redirect:/eventos/comprar/paso1";
     }
-
 }

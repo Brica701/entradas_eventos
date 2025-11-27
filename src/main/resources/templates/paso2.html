@@ -1,38 +1,54 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Paso 2 - Selección de zona</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
 
-<h2>Selecciona la zona de las entradas</h2>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
 
-<!-- Resumen del evento -->
-<div>
-    <p><strong>Evento:</strong> <span th:text="${evento.nombre}"></span></p>
-    <p><strong>Fecha y hora:</strong> <span th:text="${evento.fechaHora}"></span></p>
-    <p><strong>Lugar:</strong> <span th:text="${evento.lugar}"></span></p>
-    <p><strong>Precio base (GENERAL):</strong> <span th:text="${evento.precioBase}"></span></p>
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Paso 2 - Selección de zona</h4>
+                </div>
+                <div class="card-body">
+
+                    <div class="mb-4 p-3 bg-light rounded">
+                        <h5>Resumen del evento</h5>
+                        <p><strong>Evento:</strong> <span th:text="${evento.nombre}"></span></p>
+                        <p><strong>Fecha y hora:</strong> <span th:text="${evento.fechaHora}"></span></p>
+                        <p><strong>Lugar:</strong> <span th:text="${evento.lugar}"></span></p>
+                        <p><strong>Precio base (GENERAL):</strong> <span th:text="${evento.precioBase}"></span> €</p>
+                    </div>
+
+                    <form th:action="@{/eventos/comprar/paso2}" th:object="${compraEntrada}" method="post">
+
+                        <div class="mb-3">
+                            <label for="zona" class="form-label">Zona</label>
+                            <select th:field="*{zona}" class="form-select" id="zona" required>
+                                <option value="" disabled>Seleccione una zona</option>
+                                <option th:each="z : ${zonas}" th:value="${z}" th:text="${z}"></option>
+                            </select>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a th:href="@{/eventos/comprar/paso1}" class="btn btn-secondary">Anterior</a>
+                            <button type="submit" class="btn btn-success">Siguiente</button>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
 </div>
 
-<!-- Formulario para seleccionar zona -->
-<form th:action="@{/eventos/comprar/paso2}" th:object="${compraEntrada}" method="post">
-
-    <label>Zona:</label>
-    <select th:field="*{zona}" required>
-        <option value="" disabled selected>Seleccione una zona</option>
-        <option th:each="z : ${zonas}" th:value="${z}" th:text="${z}"></option>
-    </select>
-    <br/><br/>
-
-    <button type="submit">Siguiente</button>
-</form>
-
-<!-- Botón para volver al Paso 1 -->
-<form th:action="@{/eventos/comprar/paso1}" method="get">
-    <button type="submit">Anterior</button>
-</form>
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -44,11 +44,12 @@ public class EventoRepository {
 
     public Evento obtenerPorId(Integer id) {
         String sql = """
-            SELECT id, nombre, descripcion, fecha_hora, lugar, precio_base, recargo_grada, recargo_vip 
-            FROM evento
-            WHERE id = ?
-        """;
-        return jdbcTemplate.queryForObject(sql, (rs, rowNum) ->
+        SELECT id, nombre, descripcion, fecha_hora, lugar, precio_base, recargo_grada, recargo_vip 
+        FROM evento
+        WHERE id = ?
+    """;
+
+        List<Evento> eventos = jdbcTemplate.query(sql, (rs, rowNum) ->
                         Evento.builder()
                                 .id(rs.getInt("id"))
                                 .nombre(rs.getString("nombre"))
@@ -61,6 +62,8 @@ public class EventoRepository {
                                 .build(),
                 id
         );
+
+        return eventos.isEmpty() ? null : eventos.get(0);
     }
 
     // --- COMPRAS DE ENTRADAS ---
