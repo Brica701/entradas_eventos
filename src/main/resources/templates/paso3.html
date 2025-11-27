@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Paso 3 - Confirmación de compra</title>
+</head>
+<body>
+
+<h2>Resumen de compra</h2>
+
+<div>
+    <p><strong>Evento:</strong> <span th:text="${evento.nombre}"></span></p>
+    <p><strong>Fecha y hora:</strong> <span th:text="${evento.fechaHora}"></span></p>
+    <p><strong>Lugar:</strong> <span th:text="${evento.lugar}"></span></p>
+    <p><strong>Zona seleccionada:</strong> <span th:text="${compraEntrada.zona}"></span></p>
+    <p><strong>Número de entradas:</strong> <span th:text="${compraEntrada.numeroEntradas}"></span></p>
+    <p><strong>Precio unitario:</strong> <span th:text="${compraEntrada.precioUnitario}"></span> €</p>
+    <p><strong>Precio total:</strong> <span th:text="${compraEntrada.precioTotal}"></span> €</p>
+</div>
+
+<h3>Datos del comprador</h3>
+<form th:action="@{/eventos/comprar/confirmar}" th:object="${compraEntrada}" method="post">
+    <label>Nombre:</label>
+    <input th:field="*{nombreComprador}" required />
+    <br/>
+
+    <label>Email:</label>
+    <input th:field="*{emailComprador}" type="email" required />
+    <br/>
+
+    <button type="submit">Confirmar compra</button>
+</form>
+
+</body>
+</html>

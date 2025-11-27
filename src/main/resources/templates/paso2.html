@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Paso 2 - Selección de zona</title>
+</head>
+<body>
+
+<h2>Selecciona la zona de las entradas</h2>
+
+<!-- Resumen del evento -->
+<div>
+    <p><strong>Evento:</strong> <span th:text="${evento.nombre}"></span></p>
+    <p><strong>Fecha y hora:</strong> <span th:text="${evento.fechaHora}"></span></p>
+    <p><strong>Lugar:</strong> <span th:text="${evento.lugar}"></span></p>
+    <p><strong>Precio base (GENERAL):</strong> <span th:text="${evento.precioBase}"></span></p>
+</div>
+
+<!-- Formulario para seleccionar zona -->
+<form th:action="@{/eventos/comprar/paso2}" th:object="${compraEntrada}" method="post">
+
+    <label>Zona:</label>
+    <select th:field="*{zona}" required>
+        <option value="" disabled selected>Seleccione una zona</option>
+        <option th:each="z : ${zonas}" th:value="${z}" th:text="${z}"></option>
+    </select>
+    <br/><br/>
+
+    <button type="submit">Siguiente</button>
+</form>
+
+<!-- Botón para volver al Paso 1 -->
+<form th:action="@{/eventos/comprar/paso1}" method="get">
+    <button type="submit">Anterior</button>
+</form>
+
+</body>
+</html>

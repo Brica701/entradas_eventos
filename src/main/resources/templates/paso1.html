@@ -2,35 +2,32 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Compra de Entradas - Paso 1</title>
+    <title>Paso 1 - Comprar Entrada</title>
 </head>
 <body>
 
-<h1>Compra de Entradas - Paso 1</h1>
+<h2>Compra de entradas - Paso 1</h2>
 
 <form th:action="@{/eventos/comprar/paso2}" th:object="${compraEntrada}" method="post">
 
-    <!-- Nombre del comprador -->
-    <label for="nombreComprador">Nombre:</label>
-    <input type="text" id="nombreComprador" th:field="*{nombre_comprador}" placeholder="Ingresa tu nombre" required />
-    <br/><br/>
+    <label>Nombre:</label>
+    <input th:field="*{nombreComprador}" required />
+    <br/>
 
-    <!-- Email del comprador -->
-    <label for="emailComprador">Email:</label>
-    <input type="email" id="emailComprador" th:field="*{email_comprador}" placeholder="correo@ejemplo.com" required />
-    <br/><br/>
+    <label>Email:</label>
+    <input th:field="*{emailComprador}" type="email" required />
+    <br/>
 
-    <!-- Número de entradas -->
-    <label for="numeroEntradas">Número de Entradas:</label>
-    <input type="number" id="numeroEntradas" th:field="*{numero_entradas}" min="1" value="1" required />
-    <br/><br/>
+    <label>Número de entradas:</label>
+    <input th:field="*{numeroEntradas}" type="number" min="1" required />
+    <br/>
 
-    <!-- Evento -->
-    <label for="eventoId">Evento:</label>
-    <select id="eventoId" th:field="*{eventoId}" required>
-        <option th:each="ev : ${eventos}" th:value="${ev.id}" th:text="${ev.nombre}"></option>
+    <label>Evento:</label>
+    <select th:field="*{eventoId}" required>
+        <option value="">Seleccione</option>
+        <option th:each="e : ${eventos}" th:value="${e.id}" th:text="${e.nombre}"></option>
     </select>
-    <br/><br/>
+    <br/>
 
     <button type="submit">Siguiente</button>
 

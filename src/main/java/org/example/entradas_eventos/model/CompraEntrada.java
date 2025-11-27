@@ -18,6 +18,7 @@ public class CompraEntrada {
     private String nombreComprador;
     private String emailComprador;
     private Integer numeroEntradas;
+    private String zona;                  // <-- NUEVO CAMPO
     private BigDecimal precioUnitario;
     private BigDecimal precioTotal;
     private LocalDateTime fechaCompra;
