@@ -7,18 +7,30 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-
+import java.util.Date;
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class Evento {
-    private Integer id;
+    private long id;
     private String nombre;
     private String descripcion;
-    private LocalDateTime fechaHora;
+    private LocalDateTime fecha_hora;
     private String lugar;
-    private BigDecimal precioBase;
-    private BigDecimal recargoGrada;
-    private BigDecimal recargoVip;
+    private BigDecimal precio_base;
+    private BigDecimal recargo_grada;
+    private BigDecimal recargo_vip;
+
+
+    public static void autoMapper(Evento evento1, Evento evento2) {
+        evento2.setId(evento1.getId());
+        evento2.setNombre(evento1.getNombre());
+        evento2.setDescripcion(evento1.getDescripcion());
+        evento2.setFecha_hora(evento1.getFecha_hora());
+        evento2.setLugar(evento1.getLugar());
+        evento2.setPrecio_base(evento1.getPrecio_base());
+        evento2.setRecargo_grada(evento1.getRecargo_grada());
+        evento2.setRecargo_vip(evento1.getRecargo_vip());
+    }
 }
