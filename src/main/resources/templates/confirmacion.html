@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Compra Confirmada</title>
+</head>
+<body>
+<h1>¡Compra Confirmada!</h1>
+
+<div>
+    <h2>Evento:</h2>
+    <p><strong>Nombre:</strong> <span th:text="${evento.nombre}"></span></p>
+    <p><strong>Fecha y hora:</strong> <span th:text="${#temporals.format(evento.fecha_hora, 'yyyy-MM-dd HH:mm')}"></span></p>
+    <p><strong>Lugar:</strong> <span th:text="${evento.lugar}"></span></p>
+</div>
+
+<div>
+    <h2>Detalles de la compra:</h2>
+    <p><strong>Comprador:</strong> <span th:text="${compraEntrada.nombreComprador}"></span></p>
+    <p><strong>Email:</strong> <span th:text="${compraEntrada.emailComprador}"></span></p>
+    <p><strong>Cantidad de entradas:</strong> <span th:text="${compraEntrada.numeroEntradas}"></span></p>
+    <p><strong>Zona:</strong> <span th:text="${compraEntrada.zona}"></span></p>
+    <p><strong>Precio unitario:</strong> $<span th:text="${compraEntrada.precioUnitario}"></span></p>
+    <p><strong>Precio total:</strong> $<span th:text="${compraEntrada.precioTotal}"></span></p>
+    <p><strong>Fecha de compra:</strong> <span th:text="${#temporals.format(compraEntrada.fechaCompra, 'yyyy-MM-dd HH:mm')}"></span></p>
+</div>
+
+<a th:href="@{/eventos/paso1}"><button>Volver a eventos</button></a>
+
+</body>
+</html>

@@ -2,27 +2,46 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Eventos</title>
+    <title>Evento - Paso 2</title>
 </head>
 <body>
-<h1> LISTA DE EVENTOS </h1>
-<form method="post" th:action="@{/eventos/comprar/paso2}">
-    <fieldset>
-        <legend>Evento seleccionado:</legend>
+<h1>Paso 2: Selecciona la zona</h1>
+
+<!-- Solo mostrar si hay un evento en sesión -->
+<div th:if="${evento != null}">
+    <form method="post" th:action="@{/eventos/paso3}">
+        <fieldset>
+            <legend>Evento seleccionado:</legend>
+            <div>
+                <label th:text="${evento.nombre}">Nombre del evento</label>
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>Zona:</legend>
+            <input id="generalId" type="radio" name="zona" value="GENERAL" required/>
+            <label for="generalId">General</label>
+
+            <input id="gradaId" type="radio" name="zona" value="GRADA"/>
+            <label for="gradaId">Grada</label>
+
+            <input id="vipId" type="radio" name="zona" value="VIP"/>
+            <label for="vipId">VIP</label>
+        </fieldset>
+
         <div>
-            <label th:text="${evento.nombre}"></label>
+            <a th:href="@{/eventos/paso1}">
+                <button type="button">Anterior</button>
+            </a>
+            <button type="submit">Siguiente</button>
         </div>
-    </fieldset>
-    <div>
-        <input id="generalId" type="radio" name="zona" value="GENERAL"/><label for="generalId">General</label>
-        <input id="gradaId" type="radio" name="zona" value="GRADA"/><label for="gradaId">Grada</label>
-        <input id="vipId" type="radio" name="zona" value="VIP"/><label for="vipId">Vip</label>
-    </div>
-    <a href="/eventos/comprar/paso1">
-        <button type="button">Anterior</button>
-    </a>
-    <button>Siguiente</button>
-</form>
+    </form>
+</div>
+
+<!-- Mostrar mensaje si no hay evento -->
+<div th:if="${evento == null}">
+    <p>No se ha seleccionado ningún evento. <a th:href="@{/eventos/paso1}">Volver a la lista</a></p>
+</div>
 
 </body>
 </html>

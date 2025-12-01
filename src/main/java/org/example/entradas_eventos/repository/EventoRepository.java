@@ -48,23 +48,24 @@ public class EventoRepository {
      * @throws org.springframework.dao.DataAccessException de tipo runtime - si no se encuentra el id
      */
     public Evento findById(Long id) {
-
-        return jdbcTemplate.queryForObject("""
+        try {
+            return jdbcTemplate.queryForObject("""
                 select * from evento where id = ?
                 """, (rs, rowNum) -> Evento.builder()
-                        .id(rs.getLong("id"))
-                        .nombre(rs.getString("nombre"))
-                        .descripcion(rs.getString("descripcion"))
-                        .fecha_hora(rs.getObject("fecha_hora", LocalDateTime.class))
-                        .lugar(rs.getString("lugar"))
-                        .precio_base(rs.getBigDecimal("precio_base"))
-                        .recargo_grada(rs.getBigDecimal("recargo_grada"))
-                        .recargo_vip(rs.getBigDecimal("recargo_vip"))
-                        .build()
-                , id
-        );
-
-
-
+                            .id(rs.getLong("id"))
+                            .nombre(rs.getString("nombre"))
+                            .descripcion(rs.getString("descripcion"))
+                            .fecha_hora(rs.getObject("fecha_hora", LocalDateTime.class))
+                            .lugar(rs.getString("lugar"))
+                            .precio_base(rs.getBigDecimal("precio_base"))
+                            .recargo_grada(rs.getBigDecimal("recargo_grada"))
+                            .recargo_vip(rs.getBigDecimal("recargo_vip"))
+                            .build()
+                    , id
+            );
+        } catch (org.springframework.dao.EmptyResultDataAccessException e) {
+            log.warn("No se encontró evento con id={}", id);
+            return null; // Devuelve null si no existe
+        }
     }
 }

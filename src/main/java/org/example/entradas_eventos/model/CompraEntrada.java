@@ -1,12 +1,14 @@
 package org.example.entradas_eventos.model;
 
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -22,5 +24,6 @@ public class CompraEntrada {
     private int numeroEntradas;
     private BigDecimal precioUnitario;
     private BigDecimal precioTotal;
-    private Date fechaCompra;
+    private LocalDateTime fechaCompra;
+
 }
