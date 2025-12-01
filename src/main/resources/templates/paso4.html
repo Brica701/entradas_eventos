@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<h1>Compra realizada</h1>
+<h2>Gracias por su compra</h2>
+<label>Numero de compra</label>
+<label th:text="${compraEntrada.id}"></label>
+<label>Evento</label>
+<label th:text="${evento.nombre}"></label>
+<label>Fecha/hora</label>
+<label th:text="${evento.fecha}"></label>
+<label>Lugar</label>
+<label th:text="${evento.lugar}"></label>
+<label>Zona</label>
+<label >Vip</label>
+<label>Entradas</label>
+<label th:text="${compraEntrada.numeroEntrada}"></label>
+<label>Importe</label>
+<label th:text="${compraEntrada.precioTotal}"></label>
+
+<a href="/eventos/calcular/paso1"><button type="button">Volver al listado de eventos</button></a>
+</body>
+</html>

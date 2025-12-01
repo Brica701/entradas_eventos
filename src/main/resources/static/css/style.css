@@ -1,0 +1,182 @@
+/* Estilos generales */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    background: linear-gradient(135deg, #f5f7fa, #e4f0ff);
+    color: #1f2933;
+    padding: 2rem 1rem;
+}
+
+/* Contenedor principal centrado */
+body > * {
+    width: 100%;
+}
+
+main,
+body > form,
+body > div {
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+/* Títulos */
+h1 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: #1a365d;
+    font-size: 1.8rem;
+}
+
+h2,
+legend {
+    margin: 1.2rem 0 0.8rem;
+    color: #234e70;
+    font-size: 1.2rem;
+}
+
+/* Formularios y grupos */
+form {
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 1.5rem 1.75rem;
+    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.12);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+fieldset {
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 1rem 1.25rem 1.1rem;
+    margin-bottom: 0.75rem;
+}
+
+legend {
+    padding: 0 0.4rem;
+}
+
+/* Etiquetas y elementos en columna */
+label {
+    display: block;
+    margin-bottom: 0.3rem;
+    font-weight: 500;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="number"],
+input[type="datetime-local"] {
+    width: 100%;
+    padding: 0.5rem 0.6rem;
+    border-radius: 6px;
+    border: 1px solid #cbd5e1;
+    background-color: #f8fafc;
+    font-size: 0.95rem;
+    margin-bottom: 0.6rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="number"]:focus,
+input[type="datetime-local"]:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+    background-color: #ffffff;
+}
+
+/* Radio buttons en fila pero centrados */
+div input[type="radio"] {
+    margin-right: 0.3rem;
+}
+
+div input[type="radio"] + label {
+    display: inline-block;
+    margin-right: 1.2rem;
+    font-weight: 500;
+}
+
+/* Bloques de datos (resumen, listas) */
+div,
+p {
+    margin-bottom: 0.4rem;
+}
+
+/* Botones generales */
+button {
+    padding: 0.45rem 1.4rem;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-top: 0.6rem;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+}
+
+/* Botón principal (submit) */
+button[type="submit"],
+button:not([type]) {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: #ffffff;
+    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.35);
+}
+
+/* Botón secundario (type=button) */
+button[type="button"] {
+    background: #e5e7eb;
+    color: #111827;
+    box-shadow: 0 3px 8px rgba(148, 163, 184, 0.4);
+}
+
+/* Hover botones */
+button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(15, 23, 42, 0.35);
+}
+
+button[type="button"]:hover {
+    background: #d1d5db;
+}
+
+/* Estados activos */
+button:active {
+    transform: translateY(0);
+    box-shadow: 0 3px 8px rgba(15, 23, 42, 0.25);
+}
+
+/* Enlaces que envuelven botones */
+a {
+    text-decoration: none;
+}
+
+/* Listas de eventos en modo admin */
+body > div label {
+    margin-right: 0.6rem;
+}
+
+body > div {
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding: 0.9rem 1.1rem;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.12);
+    margin-bottom: 0.8rem;
+}
+
+/* Espaciado general entre bloques en formularios largos */
+form > div,
+form > fieldset,
+form > h2 {
+    margin-bottom: 0.4rem;
+}

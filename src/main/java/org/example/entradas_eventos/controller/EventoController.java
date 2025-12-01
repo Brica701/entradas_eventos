@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.entradas_eventos.dto.PostPaso2DTO;
 import org.example.entradas_eventos.model.CompraEntrada;
 import org.example.entradas_eventos.model.Evento;
+import org.example.entradas_eventos.repository.EventoRepository;
 import org.example.entradas_eventos.service.EventoService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,108 +14,89 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 
 @Controller
-@RequestMapping("/eventos")
 @Slf4j
-@SessionAttributes({"evento", "compraEntrada"})
+@SessionAttributes({"evento","compraEntrada"})
+@RequestMapping("/eventos")
 public class EventoController {
 
     private final EventoService eventoService;
 
-    public EventoController(EventoService eventoService) {
+    private final EventoRepository eventoRepository;
+
+    public EventoController(EventoService eventoService, EventoRepository eventoRepository) {
         this.eventoService = eventoService;
+        this.eventoRepository = eventoRepository;
     }
 
-    // -------------------- PASO 1 --------------------
-    @GetMapping("/paso1")
-    public String paso1Get(Evento evento, CompraEntrada compraEntrada, Model model) {
-        log.info("paso1Get {}", evento);
 
-        var eventos = eventoService.getAll();
+
+    @ModelAttribute("evento")
+    public Evento initEvento() {
+        return new Evento();
+    }
+
+    @ModelAttribute("compraEntrada")
+    public CompraEntrada initCompraEntrada() {
+        return new CompraEntrada();
+    }
+
+
+    @GetMapping("/calcular/paso1")
+    public String calcularPaso1(Evento evento, Model model, CompraEntrada compraEntrada) {
+
+        log.info("calcularPaso1 {}",evento);
+        List<Evento> eventos = eventoService.findAllEvents();
         model.addAttribute("eventos", eventos);
-        model.addAttribute("eventoGet", evento);
-        model.addAttribute("numeroEntradas", compraEntrada != null ? compraEntrada.getNumeroEntradas() : null);
-
-        // Plantilla directamente en templates/
+        model.addAttribute("eventoGet",evento);
+        model.addAttribute("compraEntrada",compraEntrada);
         return "paso1";
     }
 
-    // -------------------- PASO 2 --------------------
-    @PostMapping("/paso2")
-    public String postPaso2(Model model, @ModelAttribute PostPaso2DTO postPaso2DTO, HttpSession session) {
-        log.info("postPaso2 {}", postPaso2DTO);
+    @PostMapping("/calcular/paso2")
+    public String calcularPaso2Post( @ModelAttribute PostPaso2DTO postPaso2DTO, HttpSession httpSession, Model model) {
+        log.info("calcularPaso2Post", postPaso2DTO);
 
-        Evento eventoBd;
-        try {
-            eventoBd = eventoService.findById(postPaso2DTO.getEventoId());
-        } catch (org.springframework.dao.EmptyResultDataAccessException e) {
-            // Si no existe el evento, redirige a paso1
-            log.warn("Evento no encontrado con id {}", postPaso2DTO.getEventoId());
-            return "redirect:/eventos/paso1";
-        }
+        Evento eventoBd = eventoService.findEventoId(postPaso2DTO.getEventoId());
+        CompraEntrada compraEntrada = CompraEntrada.builder()
+                .numeroEntrada(postPaso2DTO.getCantidadEntradas())
+                .build();
+        compraEntrada.setEventoId(postPaso2DTO.getEventoId());
+        compraEntrada.setFechaCompra(LocalDateTime.now());
+        compraEntrada.setPrecioUnitario(eventoBd.getPrecioBase().add(eventoBd.getRecargoVip()));
+        compraEntrada.setPrecioTotal(compraEntrada.getPrecioUnitario().multiply(BigDecimal.valueOf(compraEntrada.getNumeroEntrada())));
+        httpSession.setAttribute("evento", eventoBd);
+        httpSession.setAttribute("compraEntrada",compraEntrada);
+        model.addAttribute("evento",eventoBd);
+        model.addAttribute("compraEntrada", compraEntrada);
 
-        session.setAttribute("evento", eventoBd);
-        session.setAttribute("compraEntrada", CompraEntrada.builder()
-                .numeroEntradas(postPaso2DTO.getCantidadEntradas())
-                .build());
-
-        model.addAttribute("evento", eventoBd);
-
-        // Plantilla directamente en templates/
         return "paso2";
     }
 
-    // -------------------- PASO 3 --------------------
-    @GetMapping("/paso3")
-    public String paso3Get(Model model, HttpSession session) {
-        var evento = (Evento) session.getAttribute("evento");
-        var compra = (CompraEntrada) session.getAttribute("compraEntrada");
-
-        if (evento == null || compra == null) {
-            return "redirect:/eventos/paso1";
-        }
-
-        model.addAttribute("evento", evento);
-        model.addAttribute("compraEntrada", compra);
-
+    @PostMapping("/calcular/paso3")
+    public String calcularPaso3Post( HttpSession httpSession, Model model,@RequestParam("zona") String zona) {
+        Evento eventoBd = (Evento) httpSession.getAttribute("evento");
+        CompraEntrada compraEntrada = (CompraEntrada) httpSession.getAttribute("compraEntrada");
+        //como no tenemos un th field usamos el requestParam de zona y lo metemos a mano
+        compraEntrada.setZona(zona);
+        httpSession.setAttribute("evento", eventoBd);
+        model.addAttribute("evento",eventoBd);
+        model.addAttribute("compraEntrada",compraEntrada);
         return "paso3";
     }
 
-    @PostMapping("/paso3")
-    public String paso3Post(@ModelAttribute CompraEntrada compraEntradaForm,
-                            HttpSession session,
-                            Model model) {
-        var evento = (Evento) session.getAttribute("evento");
-        var compra = (CompraEntrada) session.getAttribute("compraEntrada");
+    @PostMapping("/calcular/paso4")
+    public String caluclarPaso4Post(HttpSession httpSession, Model model, CompraEntrada compraEntrada) {
+        Evento eventoBd = (Evento) httpSession.getAttribute("evento");
 
-        if (evento == null || compra == null) {
-            return "redirect:/eventos/paso1";
-        }
-
-        compra.setNombreComprador(compraEntradaForm.getNombreComprador());
-        compra.setEmailComprador(compraEntradaForm.getEmailComprador());
-        compra.setZona(compraEntradaForm.getZona());
-
-        // Calcular precios
-        BigDecimal precioUnitario = evento.getPrecio_base();
-        String zona = compra.getZona() != null ? compra.getZona().toUpperCase() : "GENERAL";
-        switch (zona) {
-            case "GRADA":
-                precioUnitario = precioUnitario.add(evento.getRecargo_grada());
-                break;
-            case "VIP":
-                precioUnitario = precioUnitario.add(evento.getRecargo_vip());
-                break;
-        }
-        compra.setPrecioUnitario(precioUnitario);
-        compra.setPrecioTotal(precioUnitario.multiply(BigDecimal.valueOf(compra.getNumeroEntradas())));
-        compra.setEventoId((int) evento.getId());
-        compra.setFechaCompra(LocalDateTime.now());
-
-        model.addAttribute("evento", evento);
-        model.addAttribute("compraEntrada", compra);
-
-        return "confirmacion";
+        eventoRepository.createEntrada(compraEntrada);
+        httpSession.setAttribute("evento", eventoBd);
+        httpSession.setAttribute("compraEntrada",compraEntrada);
+        model.addAttribute("evento",eventoBd);
+        model.addAttribute("compraEntrada",compraEntrada);
+        return "paso4";
     }
+
 }

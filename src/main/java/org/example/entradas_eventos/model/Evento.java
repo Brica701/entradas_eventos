@@ -14,24 +14,21 @@ import java.util.Date;
 @NoArgsConstructor
 @Builder
 public class Evento {
-    private long id;
+    private Integer id;
+
     private String nombre;
+
     private String descripcion;
-    private LocalDateTime fecha_hora;
+
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    private LocalDateTime fecha;
+
     private String lugar;
-    private BigDecimal precio_base;
-    private BigDecimal recargo_grada;
-    private BigDecimal recargo_vip;
 
+    private BigDecimal precioBase;
 
-    public static void autoMapper(Evento evento1, Evento evento2) {
-        evento2.setId(evento1.getId());
-        evento2.setNombre(evento1.getNombre());
-        evento2.setDescripcion(evento1.getDescripcion());
-        evento2.setFecha_hora(evento1.getFecha_hora());
-        evento2.setLugar(evento1.getLugar());
-        evento2.setPrecio_base(evento1.getPrecio_base());
-        evento2.setRecargo_grada(evento1.getRecargo_grada());
-        evento2.setRecargo_vip(evento1.getRecargo_vip());
-    }
+    private BigDecimal recargoGrada;
+
+    private BigDecimal recargoVip;
+
 }

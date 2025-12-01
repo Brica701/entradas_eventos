@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div th:each="e: ${eventos}">
+    <label th:text="${e.id}"></label>
+    <label th:text="${e.nombre}"></label>
+    <label th:text="${e.fecha}"></label>
+    <label th:text="${e.lugar}"></label>
+    <label th:text="${e.precioBase}"></label>
+    <a th:href="@{'/eventos/editar/' + ${e.id}}"><button type="button">Editar</button></a>
+    <a th:href="@{'/eventos/borrar/' + ${e.id}}"><button type="button">Borrar</button></a>
+</div>
+<a href="/eventos/añadir"><button>Añadir Evento</button></a>
+
+</body>
+</html>

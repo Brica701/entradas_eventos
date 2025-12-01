@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class PostPaso2DTO {
 
-    private long eventoId;
+    private int eventoId;
     private int cantidadEntradas;
 
 }

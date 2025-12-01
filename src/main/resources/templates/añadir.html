@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<form method="post"  th:action="@{/eventos/añadir}" th:object="${evento}">
+    <h1>Crear evento</h1>
+    <label>Nombre</label>
+    <input th:field="*{nombre}">
+    <label>Descripcion</label>
+    <input th:field="*{descripcion}">
+    <label>Fecha/hora</label>
+    <input type="datetime-local" th:field="*{fecha}">
+    <label>Lugar</label>
+    <input th:field="*{lugar}">
+    <label>Precio Base</label>
+    <input th:field="*{precioBase}">
+    <label>Recargo Grada</label>
+    <input th:field="*{recargoGrada}">
+    <label>Recargo VIP</label>
+    <input th:field="*{recargoVip}">
+    <button>Añadir</button>
+    <a href="/eventos/index"><button>Cancelar</button></a>
+</form>
+</body>
+</html>
