@@ -36,4 +36,20 @@ public class EventoService {
         }
         return precio;
     }
+    // Esto es admin
+
+    public void crearEvento(Evento evento) {
+        eventoRepository.createEvento(evento);
+        log.info("Evento creado: {}", evento.getNombre());
+    }
+
+    public void actualizarEvento(Evento evento) {
+        eventoRepository.actualizarEvento(evento);
+        log.info("Evento actualizado: {}", evento.getNombre());
+    }
+
+    public void eliminarEvento(int id) {
+        eventoRepository.eliminarEvento(id);
+        log.info("Evento eliminado con ID: {}", id);
+    }
 }
