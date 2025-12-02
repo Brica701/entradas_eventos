@@ -1,6 +1,5 @@
 package org.example.entradas_eventos.controller;
 
-import jakarta.servlet.http.HttpSession;
 import org.example.entradas_eventos.model.CompraEntrada;
 import org.example.entradas_eventos.model.Evento;
 import org.example.entradas_eventos.repository.EventoRepository;
@@ -15,6 +14,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/eventos")
+@SessionAttributes("compra") // Guardamos la compra en sesión automáticamente
 public class EventoController {
 
     private final EventoRepository repo;
@@ -25,6 +25,12 @@ public class EventoController {
         this.service = service;
     }
 
+    // Inicializamos el objeto de sesión
+    @ModelAttribute("compra")
+    public CompraEntrada initCompra() {
+        return new CompraEntrada();
+    }
+
     // Paso 1: mostrar eventos
     @GetMapping("/paso1")
     public String paso1(Model model) {
@@ -33,52 +39,57 @@ public class EventoController {
         return "paso1";
     }
 
+    // Paso 2: seleccionar evento y número de entradas
     @PostMapping("/paso2")
-    public String paso2(@RequestParam int eventoId, @RequestParam int cantidad, HttpSession session, Model model) {
-        Evento e = repo.findById(eventoId);
-        CompraEntrada c = new CompraEntrada();
-        c.setEventoId(eventoId);
-        c.setNumeroEntradas(cantidad);
+    public String paso2(@ModelAttribute("compra") CompraEntrada compra,
+                        @RequestParam int eventoId,
+                        @RequestParam int cantidad,
+                        Model model) {
 
-        session.setAttribute("evento", e);
-        session.setAttribute("compra", c);
+        Evento e = repo.findById(eventoId);
+
+        compra.setEventoId(eventoId);
+        compra.setNumeroEntradas(cantidad);
 
         model.addAttribute("evento", e);
         return "paso2";
     }
 
-    // Paso 2: seleccionar zona
+    // Paso 3: seleccionar zona
     @PostMapping("/paso3")
-    public String paso3(@RequestParam String zona, HttpSession session, Model model) {
-        CompraEntrada c = (CompraEntrada) session.getAttribute("compra");
-        Evento e = (Evento) session.getAttribute("evento");
+    public String paso3(@ModelAttribute("compra") CompraEntrada compra,
+                        @RequestParam String zona,
+                        Model model) {
 
-        c.setZona(zona);
+        Evento e = repo.findById(compra.getEventoId());
+        compra.setZona(zona);
+
         model.addAttribute("evento", e);
-        model.addAttribute("compra", c);
         return "paso3";
     }
 
-    // Paso 3: datos comprador y confirmación
+    // Paso 4: datos del comprador y confirmación
     @PostMapping("/paso4")
-    public String paso4(@RequestParam String nombre, @RequestParam String email, HttpSession session, Model model) {
-        CompraEntrada c = (CompraEntrada) session.getAttribute("compra");
-        Evento e = (Evento) session.getAttribute("evento");
+    public String paso4(@ModelAttribute("compra") CompraEntrada compra,
+                        @RequestParam String nombre,
+                        @RequestParam String email,
+                        Model model) {
 
-        c.setNombreComprador(nombre);
-        c.setEmailComprador(email);
-        c.setFechaCompra(LocalDateTime.now());
+        Evento e = repo.findById(compra.getEventoId());
 
-        // calcular precios
-        BigDecimal precioUnitario = service.calcularPrecio(e, c.getZona());
-        c.setPrecioUnitario(precioUnitario);
-        c.setPrecioTotal(precioUnitario.multiply(BigDecimal.valueOf(c.getNumeroEntradas())));
+        compra.setNombreComprador(nombre);
+        compra.setEmailComprador(email);
+        compra.setFechaCompra(LocalDateTime.now());
 
-        // guardar en BD
-        repo.createCompra(c);
+        // Calcular precios
+        BigDecimal precioUnitario = service.calcularPrecio(e, compra.getZona());
+        compra.setPrecioUnitario(precioUnitario);
+        compra.setPrecioTotal(precioUnitario.multiply(BigDecimal.valueOf(compra.getNumeroEntradas())));
+
+        // Guardar en BD
+        repo.createCompra(compra);
 
         model.addAttribute("evento", e);
-        model.addAttribute("compra", c);
         return "paso4";
     }
 }

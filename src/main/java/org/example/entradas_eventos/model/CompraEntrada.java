@@ -18,10 +18,12 @@ public class CompraEntrada {
 
     private Integer id;
     private Integer eventoId;
+    private Integer numeroEntradas;
+    private String zona;
+
     private String nombreComprador;
     private String emailComprador;
-    private String zona;
-    private Integer numeroEntradas;
+
     private BigDecimal precioUnitario;
     private BigDecimal precioTotal;
     private LocalDateTime fechaCompra;
