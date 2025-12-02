@@ -15,20 +15,12 @@ import java.util.Date;
 @Builder
 public class Evento {
     private Integer id;
-
     private String nombre;
-
     private String descripcion;
-
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime fecha;
-
     private String lugar;
-
     private BigDecimal precioBase;
-
     private BigDecimal recargoGrada;
-
     private BigDecimal recargoVip;
 
 }

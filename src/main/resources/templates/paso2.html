@@ -1,28 +1,25 @@
-<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Eventos</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <title>Paso 2 - Selección de zona</title>
 </head>
 <body>
-<h1> LISTA DE EVENTOS </h1>
-<form method="post" th:action="@{/eventos/calcular/paso3}">
-    <fieldset>
-        <legend>Evento seleccionado</legend>
-        <div >
-            <label th:text="${evento.nombre}"></label>
-        </div>
-    </fieldset>
-    <div>
-        <input id="generalId" type="radio" name="zona" value="GENERAL"><label for="generalId">General</label>
-        <input id="gradaId" type="radio" name="zona" value="GRADA"><label for="gradaId">Grada</label>
-        <input id="vipId" type="radio" name="zona" value="VIP"><label for="vipId">Vip</label>
-    </div>
-    <a href="/eventos/calcular/paso1"><button type="button">Anterior</button></a>
+<h1>Selecciona la zona</h1>
 
-    <button>Siguiente</button>
+<div>
+    <p>Evento: <span th:text="${evento.nombre}"></span></p>
+    <p>Lugar: <span th:text="${evento.lugar}"></span></p>
+    <p>Fecha: <span th:text="${evento.fecha}"></span></p>
+    <p>Precio base: <span th:text="${evento.precioBase}"></span></p>
+</div>
+
+<form method="post" th:action="@{/eventos/paso3}">
+    <label><input type="radio" name="zona" value="GENERAL" checked/> GENERAL</label>
+    <label><input type="radio" name="zona" value="GRADA"/> GRADA (+<span th:text="${evento.recargoGrada}"></span>)</label>
+    <label><input type="radio" name="zona" value="VIP"/> VIP (+<span th:text="${evento.recargoVip}"></span>)</label>
+    <button type="submit">Siguiente</button>
 </form>
 
+<a th:href="@{/eventos/paso1}">Anterior</a>
 </body>
 </html>

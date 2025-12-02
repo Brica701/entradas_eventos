@@ -1,29 +1,19 @@
-<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Eventos</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <title>Paso 1 - Selección de evento</title>
 </head>
 <body>
-<h1> LISTA DE EVENTOS </h1>
-<form method="post" th:action="@{/eventos/calcular/paso2}">
-    <fieldset>
-        <legend>Selecciona un evento</legend>
-        <div th:each="evento : ${eventos}">
-            <input type="radio" th:id="${evento.id}" th:value="${evento.id}"
-                   name="eventoId" th:checked="${eventoGet ne null and evento.id eq eventoGet.id}" required>
-            <label th:for="${evento.id}" th:text="${evento.nombre}"></label>
-        </div>
-    </fieldset>
-    <div>
-        <label for="cantidadEntradas">Cantidad de entradas:</label>
-        <input type="number" id="cantidadEntradas" name="cantidadEntradas"  min="1" required>
-    </div>
-    <button>Continuar</button>
+<h1>Selecciona un evento y número de entradas</h1>
+<form method="post" th:action="@{/eventos/paso2}">
+    <label>Evento:</label>
+    <select name="eventoId">
+        <option th:each="e : ${eventos}" th:value="${e.id}"
+                th:text="${e.nombre} + ' - ' + ${e.fecha} + ' - ' + ${e.lugar}"></option>
+    </select>
+    <label>Número de entradas:</label>
+    <input type="number" name="cantidad" min="1" value="1"/>
+    <button type="submit">Siguiente</button>
 </form>
-
-<a href="/eventos/index"><button type="button">Modo admin</button></a>
-
 </body>
 </html>

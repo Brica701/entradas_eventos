@@ -1,8 +1,6 @@
 package org.example.entradas_eventos.controller;
 
 import jakarta.servlet.http.HttpSession;
-import lombok.extern.slf4j.Slf4j;
-import org.example.entradas_eventos.dto.PostPaso2DTO;
 import org.example.entradas_eventos.model.CompraEntrada;
 import org.example.entradas_eventos.model.Evento;
 import org.example.entradas_eventos.repository.EventoRepository;
@@ -13,90 +11,74 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 @Controller
-@Slf4j
-@SessionAttributes({"evento","compraEntrada"})
 @RequestMapping("/eventos")
 public class EventoController {
 
-    private final EventoService eventoService;
+    private final EventoRepository repo;
+    private final EventoService service;
 
-    private final EventoRepository eventoRepository;
-
-    public EventoController(EventoService eventoService, EventoRepository eventoRepository) {
-        this.eventoService = eventoService;
-        this.eventoRepository = eventoRepository;
+    public EventoController(EventoRepository repo, EventoService service) {
+        this.repo = repo;
+        this.service = service;
     }
 
-
-
-    @ModelAttribute("evento")
-    public Evento initEvento() {
-        return new Evento();
-    }
-
-    @ModelAttribute("compraEntrada")
-    public CompraEntrada initCompraEntrada() {
-        return new CompraEntrada();
-    }
-
-
-    @GetMapping("/calcular/paso1")
-    public String calcularPaso1(Evento evento, Model model, CompraEntrada compraEntrada) {
-
-        log.info("calcularPaso1 {}",evento);
-        List<Evento> eventos = eventoService.findAllEvents();
+    // Paso 1: mostrar eventos
+    @GetMapping("/paso1")
+    public String paso1(Model model) {
+        List<Evento> eventos = repo.findAll();
         model.addAttribute("eventos", eventos);
-        model.addAttribute("eventoGet",evento);
-        model.addAttribute("compraEntrada",compraEntrada);
         return "paso1";
     }
 
-    @PostMapping("/calcular/paso2")
-    public String calcularPaso2Post( @ModelAttribute PostPaso2DTO postPaso2DTO, HttpSession httpSession, Model model) {
-        log.info("calcularPaso2Post", postPaso2DTO);
+    @PostMapping("/paso2")
+    public String paso2(@RequestParam int eventoId, @RequestParam int cantidad, HttpSession session, Model model) {
+        Evento e = repo.findById(eventoId);
+        CompraEntrada c = new CompraEntrada();
+        c.setEventoId(eventoId);
+        c.setNumeroEntradas(cantidad);
 
-        Evento eventoBd = eventoService.findEventoId(postPaso2DTO.getEventoId());
-        CompraEntrada compraEntrada = CompraEntrada.builder()
-                .numeroEntrada(postPaso2DTO.getCantidadEntradas())
-                .build();
-        compraEntrada.setEventoId(postPaso2DTO.getEventoId());
-        compraEntrada.setFechaCompra(LocalDateTime.now());
-        compraEntrada.setPrecioUnitario(eventoBd.getPrecioBase().add(eventoBd.getRecargoVip()));
-        compraEntrada.setPrecioTotal(compraEntrada.getPrecioUnitario().multiply(BigDecimal.valueOf(compraEntrada.getNumeroEntrada())));
-        httpSession.setAttribute("evento", eventoBd);
-        httpSession.setAttribute("compraEntrada",compraEntrada);
-        model.addAttribute("evento",eventoBd);
-        model.addAttribute("compraEntrada", compraEntrada);
+        session.setAttribute("evento", e);
+        session.setAttribute("compra", c);
 
+        model.addAttribute("evento", e);
         return "paso2";
     }
 
-    @PostMapping("/calcular/paso3")
-    public String calcularPaso3Post( HttpSession httpSession, Model model,@RequestParam("zona") String zona) {
-        Evento eventoBd = (Evento) httpSession.getAttribute("evento");
-        CompraEntrada compraEntrada = (CompraEntrada) httpSession.getAttribute("compraEntrada");
-        //como no tenemos un th field usamos el requestParam de zona y lo metemos a mano
-        compraEntrada.setZona(zona);
-        httpSession.setAttribute("evento", eventoBd);
-        model.addAttribute("evento",eventoBd);
-        model.addAttribute("compraEntrada",compraEntrada);
+    // Paso 2: seleccionar zona
+    @PostMapping("/paso3")
+    public String paso3(@RequestParam String zona, HttpSession session, Model model) {
+        CompraEntrada c = (CompraEntrada) session.getAttribute("compra");
+        Evento e = (Evento) session.getAttribute("evento");
+
+        c.setZona(zona);
+        model.addAttribute("evento", e);
+        model.addAttribute("compra", c);
         return "paso3";
     }
 
-    @PostMapping("/calcular/paso4")
-    public String caluclarPaso4Post(HttpSession httpSession, Model model, CompraEntrada compraEntrada) {
-        Evento eventoBd = (Evento) httpSession.getAttribute("evento");
+    // Paso 3: datos comprador y confirmación
+    @PostMapping("/paso4")
+    public String paso4(@RequestParam String nombre, @RequestParam String email, HttpSession session, Model model) {
+        CompraEntrada c = (CompraEntrada) session.getAttribute("compra");
+        Evento e = (Evento) session.getAttribute("evento");
 
-        eventoRepository.createEntrada(compraEntrada);
-        httpSession.setAttribute("evento", eventoBd);
-        httpSession.setAttribute("compraEntrada",compraEntrada);
-        model.addAttribute("evento",eventoBd);
-        model.addAttribute("compraEntrada",compraEntrada);
+        c.setNombreComprador(nombre);
+        c.setEmailComprador(email);
+        c.setFechaCompra(LocalDateTime.now());
+
+        // calcular precios
+        BigDecimal precioUnitario = service.calcularPrecio(e, c.getZona());
+        c.setPrecioUnitario(precioUnitario);
+        c.setPrecioTotal(precioUnitario.multiply(BigDecimal.valueOf(c.getNumeroEntradas())));
+
+        // guardar en BD
+        repo.createCompra(c);
+
+        model.addAttribute("evento", e);
+        model.addAttribute("compra", c);
         return "paso4";
     }
-
 }

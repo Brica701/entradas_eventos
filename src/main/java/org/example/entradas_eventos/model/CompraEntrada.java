@@ -17,21 +17,13 @@ import java.time.LocalDateTime;
 public class CompraEntrada {
 
     private Integer id;
-
     private Integer eventoId;
-
     private String nombreComprador;
-
     private String emailComprador;
-
     private String zona;
-
-    private Integer numeroEntrada;
-
+    private Integer numeroEntradas;
     private BigDecimal precioUnitario;
-
     private BigDecimal precioTotal;
-
     private LocalDateTime fechaCompra;
 
 }

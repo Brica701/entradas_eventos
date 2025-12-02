@@ -18,6 +18,7 @@ create table compra_entrada
     evento_id        int            not null,
     nombre_comprador varchar(100)   null,
     email_comprador  varchar(100)   null,
+    zona             VARCHAR(20)    NULL,  -- NUEVA COLUMNA
     numero_entrada   int            null,
     precio_unitario  decimal(10, 2) null,
     precio_total     decimal(10, 2) null,
@@ -25,3 +26,4 @@ create table compra_entrada
     constraint compra_entrada_evento_id_fk
         foreign key (evento_id) references evento (id)
 );
+

@@ -1,28 +1,18 @@
-<!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <title>Compra confirmada</title>
 </head>
 <body>
 <h1>Compra realizada</h1>
-<h2>Gracias por su compra</h2>
-<label>Numero de compra</label>
-<label th:text="${compraEntrada.id}"></label>
-<label>Evento</label>
-<label th:text="${evento.nombre}"></label>
-<label>Fecha/hora</label>
-<label th:text="${evento.fecha}"></label>
-<label>Lugar</label>
-<label th:text="${evento.lugar}"></label>
-<label>Zona</label>
-<label >Vip</label>
-<label>Entradas</label>
-<label th:text="${compraEntrada.numeroEntrada}"></label>
-<label>Importe</label>
-<label th:text="${compraEntrada.precioTotal}"></label>
 
-<a href="/eventos/calcular/paso1"><button type="button">Volver al listado de eventos</button></a>
+<p>Gracias por su compra, <span th:text="${compra.nombreComprador}"></span>!</p>
+<p>Evento: <span th:text="${evento.nombre}"></span></p>
+<p>Zona: <span th:text="${compra.zona}"></span></p>
+<p>Entradas: <span th:text="${compra.numeroEntradas}"></span></p>
+<p>Precio unitario: <span th:text="${compra.precioUnitario}"></span></p>
+<p>Precio total: <span th:text="${compra.precioTotal}"></span></p>
+
+<a th:href="@{/eventos/paso1}">Volver al listado de eventos</a>
 </body>
 </html>

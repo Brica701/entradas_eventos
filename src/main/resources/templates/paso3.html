@@ -1,38 +1,25 @@
-<!DOCTYPE html>
-<html lang="en"  xmlns:th="http://www.thymeleaf.org">
-
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <title>Paso 3 - Datos comprador</title>
 </head>
 <body>
-<form method="post" th:action="@{/eventos/calcular/paso4}" th:object="${compraEntrada}">
-    <fieldset>
-        <legend>Evento seleccionado</legend>
-        <div >
-            <label th:text="${evento.nombre}"></label>
-            <label th:text="${evento.lugar}"></label>
-            <label th:text="${evento.fecha}"></label>
-        </div>
-    </fieldset>
-    <h2>Datos Comprador</h2>
-    <label>Nombre</label><input type="text" th:field="*{nombreComprador}">
-    <label>Email</label><input type="text" th:field="*{emailComprador}">
+<h1>Introduce tus datos y confirma la compra</h1>
 
-    <h2>Resumen de la compra</h2>
-    <label>Zona</label>
-    <label th:text="${compraEntrada.zona}"></label>
-    <label>Numero entradas</label>
-    <label th:text="${compraEntrada.numeroEntrada}"></label>
-    <label>Precio base</label>
-    <label th:text="${evento.precioBase}"></label>
-    <label>Recargo</label>
-    <label th:text="${evento.recargoVip}"></label>
-    <label>Precio total</label>
-    <label th:text="${compraEntrada.precioTotal}"></label>
-    <a th:href="@{/eventos/calcular/paso2}"><button type="button">Anterior</button></a>
-    <button>Siguiente</button>
+<div>
+    <p>Evento: <span th:text="${evento.nombre}"></span></p>
+    <p>Zona: <span th:text="${compra.zona}"></span></p>
+    <p>Entradas: <span th:text="${compra.numeroEntradas}"></span></p>
+</div>
+
+<form method="post" th:action="@{/eventos/paso4}">
+    <label>Nombre:</label>
+    <input type="text" name="nombre" required/>
+    <label>Email:</label>
+    <input type="email" name="email" required/>
+    <button type="submit">Confirmar compra</button>
 </form>
+
+<a th:href="@{/eventos/paso2}">Anterior</a>
 </body>
 </html>
