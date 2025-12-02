@@ -4,10 +4,14 @@ import org.example.entradas_eventos.model.CompraEntrada;
 import org.example.entradas_eventos.model.Evento;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.List;
 
 @Repository
@@ -59,5 +63,55 @@ public class EventoRepository {
                 c.getEventoId(), c.getNombreComprador(), c.getEmailComprador(), c.getZona(),
                 c.getNumeroEntradas(), c.getPrecioUnitario(), c.getPrecioTotal(), c.getFechaCompra()
         );
+    }
+
+    //AdminController
+    public void createEvento(Evento evento) {
+        String sql = """
+                insert into evento(nombre, descripcion, fecha, lugar, precio_base, 
+                          recargo_grada, recargo_vip)
+                          values(?, ?, ?, ?, ?, ?, ?)
+                """;
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        String [] ids = {"id"};
+
+        jdbcTemplate.update(con -> {
+                    PreparedStatement pr = con.prepareStatement(sql, ids);
+                    pr.setString(1, evento.getNombre());
+                    pr.setString(2, evento.getDescripcion());
+                    pr.setTimestamp(3, Timestamp.valueOf(evento.getFecha()));
+                    pr.setString(4, evento.getLugar());
+                    pr.setBigDecimal(5, evento.getPrecioBase());
+                    pr.setBigDecimal(6, evento.getRecargoGrada());
+                    pr.setBigDecimal(7, evento.getRecargoVip());
+                    return pr;
+                }
+                ,keyHolder);
+        evento.setId(keyHolder.getKey().intValue());
+    }
+    public void eliminarEvento(int eventoId) {
+
+        int rows = jdbcTemplate.update( """
+                DELETE FROM compra_entrada WHERE evento_id = ?
+                """, eventoId);
+        int rowUpdate = jdbcTemplate.update("""
+            DELETE FROM evento WHERE id = ?
+        """, eventoId);
+    }
+    public void actualizarEvento(Evento evento) {
+        var update = jdbcTemplate.update("""
+        update evento set nombre=?, descripcion=?, fecha=?, lugar=?, precio_base=?, 
+                          recargo_grada=?, recargo_vip=?
+        where id = ?;
+        
+        """,
+                evento.getNombre(),
+                evento.getDescripcion(),
+                Timestamp.valueOf(evento.getFecha()),
+                evento.getLugar(),
+                evento.getPrecioBase(),
+                evento.getRecargoGrada(),
+                evento.getRecargoVip(),
+                evento.getId());
     }
 }
