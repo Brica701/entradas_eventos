@@ -10,7 +10,6 @@ import org.example.entradas_eventos.service.EventoService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -50,6 +49,17 @@ public class EventoController {
         model.addAttribute("postPaso2DTO",  dto);
         return "paso1";
     }
+
+
+    @GetMapping("/paso2")
+    public String mostrarPaso2(@ModelAttribute("compra") CompraEntrada compra, Model model) {
+        // Cargar el evento de la sesión
+        Evento evento = repo.findById(compra.getEventoId());
+        model.addAttribute("evento", evento);
+
+        return "paso2"; // tu vista de selección de zona
+    }
+
 
     // Paso 2: seleccionar evento y número de entradas
     @PostMapping("/paso2")

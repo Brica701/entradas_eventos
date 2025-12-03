@@ -24,6 +24,8 @@
     <button type="submit">Confirmar compra</button>
 </form>
 
-<a th:href="@{/eventos/paso2}">Anterior</a>
+<form th:action="@{/eventos/paso2}" method="get" style="display:inline">
+    <button type="submit">Anterior</button>
+</form>
 </body>
 </html>

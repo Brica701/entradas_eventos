@@ -26,9 +26,12 @@
         <input type="radio" name="zona" value="VIP"
                th:checked="${compra.zona == 'VIP'}" /> VIP (+<span th:text="${evento.recargoVip}"></span>)
     </label>
+
     <button type="submit">Siguiente</button>
 </form>
 
-<a th:href="@{/eventos/paso1}">Anterior</a>
+<form th:action="@{/eventos/paso1}" method="get" style="display:inline">
+    <button type="submit">Anterior</button>
+</form>
 </body>
 </html>

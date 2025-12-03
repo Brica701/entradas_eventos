@@ -29,3 +29,5 @@ create table compra_entrada
         foreign key (evento_id) references evento (id)
 );
 
+
+
