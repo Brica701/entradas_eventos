@@ -91,9 +91,22 @@ public class EventoController {
 
     // POST Paso4: procesar formulario
     @PostMapping("/paso4")
-    public String confirmarCompra(@ModelAttribute("compra") CompraEntrada compra, Model model) {
+    public String confirmarCompra(
+            @ModelAttribute("compra") CompraEntrada compra,
+            @Valid @ModelAttribute("postPaso4DTO") postPaso4DTO dto,
+            BindingResult bindingResult,
+            Model model) {
+
         Evento e = repo.findById(compra.getEventoId());
 
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("evento", e);
+            return "paso3"; // recargamos el formulario con errores
+        }
+
+        // Copiar datos del DTO a la sesión
+        compra.setNombreComprador(dto.getNombre());
+        compra.setEmailComprador(dto.getEmail());
 
         BigDecimal precioUnitario = service.calcularPrecio(e, compra.getZona());
         compra.setPrecioUnitario(precioUnitario);
@@ -103,7 +116,8 @@ public class EventoController {
         repo.createCompra(compra);
 
         model.addAttribute("evento", e);
-        model.addAttribute("compra", compra); // <- para mostrar el nombre
+        model.addAttribute("compra", compra);
+
         return "paso4"; // vista final
     }
 }

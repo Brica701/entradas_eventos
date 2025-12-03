@@ -12,12 +12,14 @@
     <p>Entradas: <span th:text="${compra.numeroEntradas}"></span></p>
 </div>
 
-<form th:action="@{/eventos/paso4}" th:object="${compra}" method="post">
+<form th:action="@{/eventos/paso4}" th:object="${postPaso4DTO}" method="post">
     <label>Nombre:</label>
-    <input type="text" th:field="*{nombreComprador}" required />
+    <input type="text" th:field="*{nombre}" />
+    <p th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></p>
 
     <label>Email:</label>
-    <input type="email" th:field="*{emailComprador}" required />
+    <input type="email" th:field="*{email}" />
+    <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></p>
 
     <button type="submit">Confirmar compra</button>
 </form>
