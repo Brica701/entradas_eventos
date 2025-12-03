@@ -31,7 +31,7 @@ public class EventoRepository {
                 e.setId(rs.getInt("id"));
                 e.setNombre(rs.getString("nombre"));
                 e.setDescripcion(rs.getString("descripcion"));
-                e.setFecha(rs.getTimestamp("fecha").toLocalDateTime());
+                e.setFecha(rs.getTimestamp("fecha_hora").toLocalDateTime());
                 e.setLugar(rs.getString("lugar"));
                 e.setPrecioBase(rs.getBigDecimal("precio_base"));
                 e.setRecargoGrada(rs.getBigDecimal("recargo_grada"));
@@ -48,7 +48,7 @@ public class EventoRepository {
                     e.setId(rs.getInt("id"));
                     e.setNombre(rs.getString("nombre"));
                     e.setDescripcion(rs.getString("descripcion"));
-                    e.setFecha(rs.getTimestamp("fecha").toLocalDateTime());
+                    e.setFecha(rs.getTimestamp("fecha_hora").toLocalDateTime());
                     e.setLugar(rs.getString("lugar"));
                     e.setPrecioBase(rs.getBigDecimal("precio_base"));
                     e.setRecargoGrada(rs.getBigDecimal("recargo_grada"));

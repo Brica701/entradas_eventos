@@ -1,10 +1,12 @@
+
+USE entradas_eventos;
 create table evento
 (
     id            int auto_increment
         primary key,
     nombre        varchar(100)   not null,
     descripcion   varchar(255)   null,
-    fecha         datetime       null,
+    fecha_hora         datetime       null,
     lugar         varchar(100)   null,
     precio_base   decimal(10, 2) null,
     recargo_grada decimal(10, 2) null,

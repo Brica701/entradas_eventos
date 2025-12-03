@@ -6,6 +6,7 @@ import org.example.entradas_eventos.repository.EventoRepository;
 import org.example.entradas_eventos.service.EventoService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -44,7 +45,12 @@ public class EventoController {
     public String paso2(@ModelAttribute("compra") CompraEntrada compra,
                         @RequestParam int eventoId,
                         @RequestParam int cantidad,
+                        BindingResult bindingResult,
                         Model model) {
+
+        //Custom error
+
+
 
         Evento e = repo.findById(eventoId);
 
