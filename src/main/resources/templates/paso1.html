@@ -5,15 +5,23 @@
 </head>
 <body>
 <h1>Selecciona un evento y número de entradas</h1>
-<form method="post" th:action="@{/eventos/paso2}">
+
+<!-- Enlazamos el formulario con el DTO postPaso2DTO -->
+<form method="post" th:action="@{/eventos/paso2}" th:object="${postPaso2DTO}">
     <label>Evento:</label>
-    <select name="eventoId">
-        <option th:each="e : ${eventos}" th:value="${e.id}"
+    <select th:field="*{eventoId}">
+        <option th:each="e : ${eventos}"
+                th:value="${e.id}"
                 th:text="${e.nombre} + ' - ' + ${e.fecha} + ' - ' + ${e.lugar}"></option>
     </select>
+    <div th:if="${#fields.hasErrors('eventoId')}" th:errors="*{eventoId}"></div>
+
     <label>Número de entradas:</label>
-    <input type="number" name="cantidad" min="1" value="1"/>
+    <input type="number" th:field="*{cantidad}" min="1"/>
+    <div th:if="${#fields.hasErrors('cantidad')}" th:errors="*{cantidad}"></div>
+
     <button type="submit">Siguiente</button>
 </form>
+
 </body>
 </html>

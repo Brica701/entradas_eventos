@@ -59,7 +59,7 @@ public class EventoRepository {
 
     public void createCompra(CompraEntrada c) {
         jdbcTemplate.update(
-                "INSERT INTO compra_entrada (evento_id, nombre_comprador, email_comprador, zona, numero_entrada, precio_unitario, precio_total, fecha_compra) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                "INSERT INTO compra_entrada (evento_id, nombre_comprador, email_comprador, zona, numero_entradas, precio_unitario, precio_total, fecha_compra) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
                 c.getEventoId(), c.getNombreComprador(), c.getEmailComprador(), c.getZona(),
                 c.getNumeroEntradas(), c.getPrecioUnitario(), c.getPrecioTotal(), c.getFechaCompra()
         );

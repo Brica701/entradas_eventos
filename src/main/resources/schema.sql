@@ -21,7 +21,7 @@ create table compra_entrada
     nombre_comprador varchar(100)   null,
     email_comprador  varchar(100)   null,
     zona             VARCHAR(20)    NULL,  -- NUEVA COLUMNA
-    numero_entrada   int            null,
+    numero_entradas   int            null,
     precio_unitario  decimal(10, 2) null,
     precio_total     decimal(10, 2) null,
     fecha_compra     datetime       null,

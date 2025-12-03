@@ -1,5 +1,8 @@
 package org.example.entradas_eventos.controller;
 
+import jakarta.validation.Valid;
+import org.example.entradas_eventos.dto.postPaso2DTO;
+import org.example.entradas_eventos.dto.postPaso4DTO;
 import org.example.entradas_eventos.model.CompraEntrada;
 import org.example.entradas_eventos.model.Evento;
 import org.example.entradas_eventos.repository.EventoRepository;
@@ -7,6 +10,7 @@ import org.example.entradas_eventos.service.EventoService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -37,29 +41,36 @@ public class EventoController {
     public String paso1(Model model) {
         List<Evento> eventos = repo.findAll();
         model.addAttribute("eventos", eventos);
+        model.addAttribute("postPaso2DTO", new postPaso2DTO());
         return "paso1";
     }
 
     // Paso 2: seleccionar evento y número de entradas
     @PostMapping("/paso2")
-    public String paso2(@ModelAttribute("compra") CompraEntrada compra,
-                        @RequestParam int eventoId,
-                        @RequestParam int cantidad,
-                        BindingResult bindingResult,
-                        Model model) {
+    public String paso2(
+            @ModelAttribute("compra") CompraEntrada compra,
+            @Valid @ModelAttribute postPaso2DTO postPaso2DTO,
+            BindingResult bindingResult,
+            Model model) {
 
-        //Custom error
+        if (bindingResult.hasErrors()) {
+            // Si hay errores de validación, recargar la lista de eventos y mostrar paso1
+            List<Evento> eventos = repo.findAll();
+            model.addAttribute("eventos", eventos);
+            return "paso1";
+        }
 
+        // Copiar datos del DTO a la sesión 'compra'
+        compra.setEventoId(postPaso2DTO.getEventoId());
+        compra.setNumeroEntradas(postPaso2DTO.getCantidad());
 
-
-        Evento e = repo.findById(eventoId);
-
-        compra.setEventoId(eventoId);
-        compra.setNumeroEntradas(cantidad);
-
+        // Obtener el evento seleccionado para mostrar en la vista
+        Evento e = repo.findById(postPaso2DTO.getEventoId());
         model.addAttribute("evento", e);
+
         return "paso2";
     }
+
 
     // Paso 3: seleccionar zona
     @PostMapping("/paso3")
@@ -67,35 +78,32 @@ public class EventoController {
                         @RequestParam String zona,
                         Model model) {
 
-        Evento e = repo.findById(compra.getEventoId());
         compra.setZona(zona);
 
+        Evento e = repo.findById(compra.getEventoId());
         model.addAttribute("evento", e);
+
+        // Agregar el DTO
+        model.addAttribute("postPaso4DTO", new postPaso4DTO());
+
         return "paso3";
     }
 
-    // Paso 4: datos del comprador y confirmación
+    // POST Paso4: procesar formulario
     @PostMapping("/paso4")
-    public String paso4(@ModelAttribute("compra") CompraEntrada compra,
-                        @RequestParam String nombre,
-                        @RequestParam String email,
-                        Model model) {
-
+    public String confirmarCompra(@ModelAttribute("compra") CompraEntrada compra, Model model) {
         Evento e = repo.findById(compra.getEventoId());
 
-        compra.setNombreComprador(nombre);
-        compra.setEmailComprador(email);
-        compra.setFechaCompra(LocalDateTime.now());
 
-        // Calcular precios
         BigDecimal precioUnitario = service.calcularPrecio(e, compra.getZona());
         compra.setPrecioUnitario(precioUnitario);
         compra.setPrecioTotal(precioUnitario.multiply(BigDecimal.valueOf(compra.getNumeroEntradas())));
+        compra.setFechaCompra(LocalDateTime.now());
 
-        // Guardar en BD
         repo.createCompra(compra);
 
         model.addAttribute("evento", e);
-        return "paso4";
+        model.addAttribute("compra", compra); // <- para mostrar el nombre
+        return "paso4"; // vista final
     }
 }
