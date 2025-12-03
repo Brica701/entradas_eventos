@@ -17,11 +17,10 @@
     <div th:if="${#fields.hasErrors('eventoId')}" th:errors="*{eventoId}"></div>
 
     <label>Número de entradas:</label>
-    <input type="number" th:field="*{cantidad}" min="1"/>
+    <input type="number" th:field="*{cantidad}" min="1" value="1"/>
     <div th:if="${#fields.hasErrors('cantidad')}" th:errors="*{cantidad}"></div>
 
     <button type="submit">Siguiente</button>
 </form>
-
 </body>
 </html>

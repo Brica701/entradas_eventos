@@ -38,10 +38,16 @@ public class EventoController {
 
     // Paso 1: mostrar eventos
     @GetMapping("/paso1")
-    public String paso1(Model model) {
+    public String paso1(Model model, @ModelAttribute("compra") CompraEntrada compra) {
         List<Evento> eventos = repo.findAll();
+
+        postPaso2DTO dto = new postPaso2DTO();
+        dto.setEventoId(compra.getEventoId());
+        dto.setCantidad(compra.getNumeroEntradas());
+
+
         model.addAttribute("eventos", eventos);
-        model.addAttribute("postPaso2DTO", new postPaso2DTO());
+        model.addAttribute("postPaso2DTO",  dto);
         return "paso1";
     }
 
@@ -71,6 +77,19 @@ public class EventoController {
         return "paso2";
     }
 
+    @GetMapping("/paso3")
+    public String mostrarPaso3(@ModelAttribute("compra") CompraEntrada compra, Model model) {
+        Evento e = repo.findById(compra.getEventoId());
+        model.addAttribute("evento", e);
+
+        // Crear un DTO con los datos que ya están en la compra (nombre y email)
+        postPaso4DTO dto = new postPaso4DTO();
+        dto.setNombre(compra.getNombreComprador());
+        dto.setEmail(compra.getEmailComprador());
+        model.addAttribute("postPaso4DTO", dto);
+
+        return "paso3";
+    }
 
     // Paso 3: seleccionar zona
     @PostMapping("/paso3")
@@ -88,6 +107,8 @@ public class EventoController {
 
         return "paso3";
     }
+
+
 
     // POST Paso4: procesar formulario
     @PostMapping("/paso4")

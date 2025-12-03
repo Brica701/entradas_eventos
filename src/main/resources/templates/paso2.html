@@ -14,9 +14,18 @@
 </div>
 
 <form method="post" th:action="@{/eventos/paso3}">
-    <label><input type="radio" name="zona" value="GENERAL" checked/> GENERAL</label>
-    <label><input type="radio" name="zona" value="GRADA"/> GRADA (+<span th:text="${evento.recargoGrada}"></span>)</label>
-    <label><input type="radio" name="zona" value="VIP"/> VIP (+<span th:text="${evento.recargoVip}"></span>)</label>
+    <label>
+        <input type="radio" name="zona" value="GENERAL"
+               th:checked="${compra.zona == 'GENERAL'}" /> GENERAL
+    </label>
+    <label>
+        <input type="radio" name="zona" value="GRADA"
+               th:checked="${compra.zona == 'GRADA'}" /> GRADA (+<span th:text="${evento.recargoGrada}"></span>)
+    </label>
+    <label>
+        <input type="radio" name="zona" value="VIP"
+               th:checked="${compra.zona == 'VIP'}" /> VIP (+<span th:text="${evento.recargoVip}"></span>)
+    </label>
     <button type="submit">Siguiente</button>
 </form>
 
